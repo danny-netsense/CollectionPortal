@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Title="CollectionPortal">
+  <BOModel>
+    <Class Name="CollectionPortal.Module.BusinessObjects.Product">
+      <OwnMembers>
+        <Member Name="UOMSchema" LookupEditorMode="AllItems" />
+      </OwnMembers>
+    </Class>
+    <Class Name="CollectionPortal.Module.BusinessObjects.SalesOrder">
+      <OwnMembers>
+        <Member Name="Agent" LookupEditorMode="AllItems" />
+        <Member Name="CreditLimit" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="CurrencyRate" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="Customer" LookupEditorMode="AllItems" />
+        <Member Name="OutstandingAmount" DisplayFormat="{0:n}" EditMask="n" />
+        <Member Name="OutstandingOrder" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="TotalAmount" AllowEdit="False" EditMask="n" DisplayFormat="{0:n}" />
+      </OwnMembers>
+    </Class>
+    <Class Name="CollectionPortal.Module.BusinessObjects.SalesOrderDetail" DefaultListViewShowAutoFilterRow="True">
+      <OwnMembers>
+        <Member Name="DiscountAmount" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="DiscountPercentageOrAmount" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="GrossAmount" EditMask="n" DisplayFormat="{0:n}" AllowEdit="False" />
+        <Member Name="Price" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="Product" LookupEditorMode="AllItems" />
+        <Member Name="ProductAmount" EditMask="n" DisplayFormat="{0:n}" AllowEdit="False" />
+        <Member Name="Quantity" EditMask="n" DisplayFormat="{0:n}" />
+        <Member Name="Quantity2" DisplayFormat="{0:n}" EditMask="n" />
+      </OwnMembers>
+    </Class>
+    <Class Name="CollectionPortal.Module.BusinessObjects.UOMSchema">
+      <OwnMembers>
+        <Member Name="BaseUnit" LookupEditorMode="AllItems" />
+      </OwnMembers>
+    </Class>
+    <Class Name="CollectionPortal.Module.BusinessObjects.UOMSchemaDetail">
+      <OwnMembers>
+        <Member Name="BaseUnit" LookupEditorMode="AllItems" />
+        <Member Name="Unit" LookupEditorMode="AllItems" />
+      </OwnMembers>
+    </Class>
+  </BOModel>
+  <NavigationItems>
+    <Items>
+      <Item Id="Entries" Index="0" IsNewNode="True">
+        <Items IsNewNode="True">
+          <Item Id="SalesOrder_ListView" ViewId="SalesOrder_ListView" ObjectKey="" Index="0" IsNewNode="True" />
+          <Item Id="CustomerReceipt" Caption="Customer Receipt" ViewId="CustomerReceipt_ListView" IsNewNode="True" />
+          <Item Id="SalesInvoice" ViewId="SalesInvoice_ListView" IsNewNode="True" />
+        </Items>
+      </Item>
+      <Item Id="Masters" Index="1" IsNewNode="True">
+        <Items IsNewNode="True">
+          <Item Id="Agent_ListView" ViewId="Agent_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Company_ListView" ViewId="Company_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Currency_ListView" ViewId="Currency_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="CurrencyRate_ListView" ViewId="CurrencyRate_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Customer_ListView" ViewId="Customer_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Employee_ListView" ViewId="Employee_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Location_ListView" ViewId="Location_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Product_ListView" ViewId="Product_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="UOMSchema_ListView" ViewId="UOMSchema_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Warehouse_ListView" ViewId="Warehouse_ListView" ObjectKey="" IsNewNode="True" />
+        </Items>
+      </Item>
+      <Item Id="Default">
+        <Items>
+          <Item Id="CustomerReceiptDetail_ListView" Removed="True" />
+          <Item Id="SalesInvoiceDetail_ListView" Removed="True" />
+          <Item Id="SalesOrderDetail_ListView" Removed="True" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+  <Options>
+    <LayoutManagerOptions RequiredFieldMark="*" />
+  </Options>
+  <SchemaModules>
+    <SchemaModule Name="SchedulerModuleBase" Version="19.2.5.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="19.2.5.0" IsNewNode="True" />
+  </SchemaModules>
+  <Views>
+    <DetailView Id="CustomerReceipt_DetailView">
+      <Items>
+        <PropertyEditor Id="Agent" LookupEditorMode="AllItems" />
+        <PropertyEditor Id="CashBank" LookupEditorMode="AllItems" />
+        <PropertyEditor Id="Customer" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <DetailView Id="CustomerReceiptDetail_DetailView">
+      <Items>
+        <PropertyEditor Id="SalesInvoice" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <ListView Id="Product_LookupListView">
+      <Columns>
+        <ColumnInfo Id="Code" PropertyName="Code" Index="0" IsNewNode="True" />
+        <ColumnInfo Id="Description" Index="1" />
+      </Columns>
+    </ListView>
+    <DetailView Id="SalesInvoice_DetailView">
+      <Items>
+        <PropertyEditor Id="Agent" LookupEditorMode="AllItems" />
+        <PropertyEditor Id="Customer" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <DetailView Id="SalesInvoiceDetail_DetailView">
+      <Items>
+        <PropertyEditor Id="Product" LookupEditorMode="AllItems" />
+        <PropertyEditor Id="Warehouse" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <DetailView Id="SalesOrder_DetailView">
+      <Items>
+        <PropertyEditor Id="CreditDays" AllowEdit="False" />
+        <PropertyEditor Id="CreditLimit" AllowEdit="False" />
+        <PropertyEditor Id="DocumentNumber" AllowEdit="False" />
+        <PropertyEditor Id="OutstandingAmount" AllowEdit="False" />
+        <PropertyEditor Id="OutstandingOrder" AllowEdit="False" />
+      </Items>
+    </DetailView>
+  </Views>
+</Application>

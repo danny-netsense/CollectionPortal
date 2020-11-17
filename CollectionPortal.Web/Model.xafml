@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application Company="Netsense Business Solutions SDN BHD" Title="Netsense Collection Portal" Description="Sales &amp; Collection Portal" Copyright="© 2020 netsensebs.com All Rights Reserved">
+  <NavigationItems>
+    <Items>
+      <Item Id="Masters">
+        <Items>
+          <Item Id="CashBank_ListView" ViewId="CashBank_ListView" ObjectKey="" IsNewNode="True" />
+          <Item Id="Instrument_ListView" ViewId="Instrument_ListView" ObjectKey="" IsNewNode="True" />
+        </Items>
+      </Item>
+      <Item Id="Default" Caption="Setup">
+        <Items>
+          <Item Id="Agent_ListView" Removed="True" />
+          <Item Id="CashBank_ListView" Removed="True" />
+          <Item Id="Company_ListView" Removed="True" />
+          <Item Id="Currency_ListView" Removed="True" />
+          <Item Id="CurrencyRate_ListView" Removed="True" />
+          <Item Id="Customer_ListView" Removed="True" />
+          <Item Id="CustomerReceipt_ListView" Removed="True" />
+          <Item Id="DocumentNumberingCategory_ListView" Removed="True" />
+          <Item Id="Employee_ListView" Removed="True" />
+          <Item Id="Instrument_ListView" Removed="True" />
+          <Item Id="Location_ListView" Removed="True" />
+          <Item Id="PermissionPolicyUser_ListView" Removed="True" />
+          <Item Id="Product_ListView" Removed="True" />
+          <Item Id="SalesInvoice_ListView" Removed="True" />
+          <Item Id="SalesOrder_ListView" Removed="True" />
+          <Item Id="Unit_ListView" Removed="True" />
+          <Item Id="UOMSchema_ListView" Removed="True" />
+          <Item Id="UOMSchemaDetail_ListView" Removed="True" />
+          <Item Id="Warehouse_ListView" Removed="True" />
+        </Items>
+      </Item>
+    </Items>
+  </NavigationItems>
+  <SchemaModules>
+    <SchemaModule Name="SchedulerAspNetModule" Version="19.2.5.0" IsNewNode="True" />
+    <SchemaModule Name="SchedulerModuleBase" Version="19.2.5.0" IsNewNode="True" />
+    <SchemaModule Name="SystemAspNetModule" Version="19.2.5.0" IsNewNode="True" />
+    <SchemaModule Name="SystemModule" Version="19.2.5.0" IsNewNode="True" />
+  </SchemaModules>
+</Application>
