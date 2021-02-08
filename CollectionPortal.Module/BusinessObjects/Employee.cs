@@ -32,6 +32,34 @@ namespace CollectionPortal.Module.BusinessObjects
             set { SetPropertyValue(nameof(Company), ref fCompany, value); }
         }
 
+        Agent agent = null;
+        public Agent Agent
+        {
+            get { return agent; }
+            set { SetPropertyValue<Agent>("Agent", ref agent, value); }
+            //set
+            //{
+            //    if (agent == value)
+            //        return;
+
+            //    // Store a reference to the person's former house.
+            //    Agent prevAgent = agent;
+            //    agent = value;
+
+            //    if (IsLoading) return;
+
+            //    // Remove a reference to the house's owner, if the person is its owner.
+            //    if (prevAgent != null && prevAgent.Employee == this)
+            //        prevAgent.Employee= null;
+
+            //    // Specify the person as a new owner of the house.
+            //    if (agent != null)
+            //        agent.Employee = this;
+
+            //    //OnChanged(nameof(Agent));
+            //}
+        }
+
         [Association]
         public XPCollection<Location> Locations
         {

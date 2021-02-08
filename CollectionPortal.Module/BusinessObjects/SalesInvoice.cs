@@ -398,7 +398,7 @@ namespace CollectionPortal.Module.BusinessObjects
 
         private void GetCustomerData()
         {
-            DocumentStatus = DocumentStatus.Draft;
+            DocumentStatus = DocumentStatus.Approved;
             string errorMessage = string.Empty;
             //try
             //{
@@ -488,6 +488,101 @@ namespace CollectionPortal.Module.BusinessObjects
                 {
                     docnos.CurrentNo = newnum;
                     docnos.Save();
+
+                    //=======================Insertion of ERP =================================
+                    //----------Header Section Insertion --------------------------------------
+                    string insertHeaderSQL = string.Empty;
+                    string insertDetailSQL = string.Empty;
+                    string insertPTermsSQL = string.Empty;
+                    insertHeaderSQL = "INSERT INTO BILL (agentcode,BILL_NO,sy_obj_name,sy_docno,BILL_DATE";
+                    insertHeaderSQL += ",CUSTCODE,REMARKS,NET_AMT,CURR_VAL,";
+                    insertHeaderSQL += "BAL_AMT,BAL_CURR,CURR_RATE,BASIC,";
+                    insertHeaderSQL += " EXUSER,SQLUSER,APPROVED_AMT,ADDRESS1,FROM_MOD,Br_init,valid_day)";
+                    insertHeaderSQL += " values ( ";
+                    insertHeaderSQL += " '" + this.Agent.Code + "','" + this.DocumentNumber + "','SAL_INV',0,'" + this.DocumentDate.ToString("yyyyMMdd") + "'";
+                    insertHeaderSQL += " ,'" + this.Customer.ERPCode + "','" + this.Remarks + "'," + this.TotalAmount.ToString() + "," + this.TotalAmount.ToString();
+                    insertHeaderSQL += " ," + this.TotalAmount.ToString() + "," + this.TotalAmount.ToString() + ",1," + this.TotalAmount.ToString();
+                    insertHeaderSQL += " , '" + this.Employee.UserName + "','dbo'," + this.TotalAmount + ",'" + this.Customer.Address + "'";
+                    insertHeaderSQL += " , 'INV','" + this.Location.ERPCode + "','365'";
+                    insertHeaderSQL += " )";
+                    //---------- End Header Section Insertion ----------------------------------
+
+                    //---------- Detail Section Insertion --------------------------------------
+
+                    int slno = 0;
+                    Guid unique_number;
+                    foreach (SalesInvoiceDetail sod in this.SalesInvoiceDetails)
+                    {
+                        slno += 1;
+                        unique_number = Guid.NewGuid();
+
+                        insertDetailSQL += " insert into BILLDET";
+                        insertDetailSQL += " (agentcode,sy_obj_name, sy_docno,  BILL_NO, BILL_DATE,  ";
+                        insertDetailSQL += " REMARKS,  PRICE, MRP, TOT_AMT,";
+                        insertDetailSQL += " PRODCODE,QUANTITY, BAL_QTY,";
+                        insertDetailSQL += " QUANTITY2, BAL_QTY2, CONV_FAC, ";
+                        insertDetailSQL += " CONV_BASIS, br_init, CUSTCODE, TERM_AMT,  AMOUNT, BAL_AMT, ";
+                        insertDetailSQL += " slno,FROM_MOD,unique_number,godowncode) ";
+                        insertDetailSQL += " values (";
+                        insertDetailSQL += " '" + this.Agent.Code + "','SAL_INV',0,'" + this.DocumentNumber + "','" + this.DocumentDate.ToString("yyyyMMdd") + "'";
+                        insertDetailSQL += " ,'" + sod.Product.Description.Replace("'", "''") + "'," + sod.Price.ToString() + "," + sod.Price.ToString() + "," + sod.GrossAmount.ToString();
+                        insertDetailSQL += " ,'" + sod.Product.Code + "'," + sod.Quantity.ToString() + "," + sod.Quantity + ",";
+                        insertDetailSQL += " " + sod.Quantity2.ToString() + "," + sod.Quantity2.ToString() + "," + sod.ConvFac.ToString() + ",";
+                        insertDetailSQL += " 'M', '" + this.Location.ERPCode + "','" + this.Customer.ERPCode + "'," + sod.DiscountAmount.ToString() + "," + sod.ProductAmount.ToString() + "," + sod.GrossAmount.ToString();
+                        if (sod.Warehouse == null)
+                            insertDetailSQL += " ," + slno.ToString() + ",'INV','" + unique_number.ToString() + "','null'";
+                        else
+                            insertDetailSQL += " ," + slno.ToString() + ",'INV','" + unique_number.ToString() + "','" + sod.Warehouse.Code.ToString() + "'";
+                        insertDetailSQL += " )";
+                        //insertDetailSQL += Environment.NewLine + " Go ";
+                        insertDetailSQL += Environment.NewLine;
+
+                        if (sod.DiscountAmount != 0)
+                        {
+                            insertPTermsSQL += "INSERT INTO SBIPTERM(BILL_NO, TERMS_CODE, Q_V, SLNO, EXPERCENT, ";
+                            insertPTermsSQL += " TERM_AMT, BR_INIT, UNIQUE_NUMBER, CHK_APP, AMOUNT_ON, SY_OBJ_NAME, SY_DOCNO,";
+                            insertPTermsSQL += " DOC_DATE, SERVICE, CUSTCODE, AGENTCODE)";
+                            insertPTermsSQL += " values (";
+                            if (sod.DiscountType == DiscountType.Percentage)
+                                insertPTermsSQL += " '" + this.DocumentNumber + "', '38','V','" + slno.ToString() + "', " + sod.DiscountPercentageOrAmount;
+                            else
+                                insertPTermsSQL += " '" + this.DocumentNumber + "', '38','V','" + slno.ToString() + "', " + Math.Round((sod.DiscountPercentageOrAmount * 100) / sod.ProductAmount, 2);
+                            insertPTermsSQL += " ," + sod.DiscountAmount.ToString() + ",'" + this.Location.ERPCode + "', '" + unique_number.ToString() + "', 1, " + sod.ProductAmount.ToString() + ",'SAL_ORDER',0";
+                            insertPTermsSQL += " ,'" + this.DocumentDate.ToString("yyyyMMdd") + "', 0,'" + this.Customer.ERPCode + "','" + this.Agent.Code + "'";
+                            insertPTermsSQL += " ) ";
+                            insertDetailSQL += Environment.NewLine;
+                        }
+                    }
+                    //---------- End Detail Section Insertion ----------------------------------
+
+
+                    if (this.DocumentStatus == DocumentStatus.Approved)
+                    {
+                        Session session = new Session();
+                        XpoDefault.DataLayer = XpoDefault.GetDataLayer(MSSqlConnectionProvider.GetConnectionString(Company.ServerName, Company.ERPMasterDB + Company.Initials), AutoCreateOption.None);
+                        //XpoDefault.DataLayer = XpoDefault.GetDataLayer(MSSqlConnectionProvider.GetConnectionString("ACC00", Company.ERPMasterDB + Company.Initials), AutoCreateOption.None);
+                        XpoDefault.Session = session;
+
+                        //Equivalent of SELECT * FROM TableName in SQL
+                        // YourClassName would be your XPO object (your persistent object)
+                        using (var uow = new UnitOfWork())
+                        {
+                            if (insertHeaderSQL.ToString().Trim() != "")
+                            {
+                                try
+                                {
+                                    uow.ExecuteNonQuery(insertHeaderSQL.ToString());
+                                    uow.ExecuteNonQuery(insertDetailSQL.ToString());
+                                    if (insertPTermsSQL != string.Empty)
+                                        uow.ExecuteNonQuery(insertPTermsSQL.ToString());
+                                }
+                                catch (Exception ex) { throw new UserFriendlyException(ex.Message); }
+                            }
+                        }
+                    }
+                    //=======================End Insertion of ERP =============================
+
+
                     this.IsNew = false;
                     this.Save();
                 }

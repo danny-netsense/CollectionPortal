@@ -93,6 +93,37 @@ namespace CollectionPortal.Module.BusinessObjects
             set { SetPropertyValue<string>("Address", ref fAddress, value); }
         }
 
+        private Employee fEmployee;
+        public Employee Employee
+        {
+            get
+            {
+                return fEmployee;
+            }
+            //set
+            //{
+            //    if (fEmployee == value)
+            //        return;
+
+            //    // Store a reference to the former owner.
+            //    Employee prevEmployee = fEmployee;
+            //    fEmployee = value;
+
+            //    if (IsLoading) return;
+
+            //    // Remove an owner's reference to this building, if exists.
+            //    if (prevEmployee != null && prevEmployee.Agent == this)
+            //        prevEmployee.Agent = null;
+
+            //    // Specify that the building is a new owner's house.
+            //    if (fEmployee != null)
+            //        fEmployee.Agent = this;
+            //    //OnChanged(nameof(Employee));
+            //}
+            set { SetPropertyValue<Employee>("Employee", ref fEmployee, value); }
+        }
+
+
         private Company fCompany;
         [Browsable(false)]
         public Company Company

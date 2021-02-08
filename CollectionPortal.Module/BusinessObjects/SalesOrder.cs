@@ -556,7 +556,7 @@ namespace CollectionPortal.Module.BusinessObjects
                         }
                     }
                     //---------- End Detail Section Insertion ----------------------------------
-                    //=======================End Insertion of ERP =============================
+                    
 
                     if (this.DocumentStatus == DocumentStatus.Approved)
                     {
@@ -582,6 +582,8 @@ namespace CollectionPortal.Module.BusinessObjects
                             }
                         }
                     }
+                    //=======================End Insertion of ERP =============================
+
                     this.IsNew = false;
                     this.Save();
                 }
