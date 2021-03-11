@@ -58,7 +58,7 @@ namespace CollectionPortal.Module.BusinessObjects
         [Persistent("CustomerID")] // this line for read-only columns mapping
         private int _CustomerID;
         [RuleRequiredField] // Validation for Required
-        [RuleUniqueValue] // Validation for unique value
+        //[RuleUniqueValue] // Validation for unique value
         [Browsable(false)]
 
         [PersistentAlias("_CustomerID")] // This line for read-only column mapping

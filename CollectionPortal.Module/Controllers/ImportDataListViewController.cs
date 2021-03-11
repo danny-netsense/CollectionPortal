@@ -10,7 +10,7 @@ namespace CollectionPortal.Module.Controllers
     // For more typical usage scenarios, be sure to check out https://documentation.devexpress.com/eXpressAppFramework/clsDevExpressExpressAppViewControllertopic.aspx.
     public partial class ImportDataListViewController : ViewController
     {
-        public const int MaxImportedRecordsCount = 10;
+        public const int MaxImportedRecordsCount = 10000;
         public const string ActiveKeyImportAction = "ActiveKeyImportAction";
         //1st Change
         public const string ActiveKeyImportActionItemRootListViewForAgent = "Item is active only in the root ListView for Agent";

@@ -60,8 +60,20 @@ namespace CollectionPortal.Module.BusinessObjects
                 }
                 DocumentDate = DateTime.Today;
                 CreatedDateTime = DateTime.Now;
+                Agent = Employee.Agent;
             }
             // Place your initialization code here (https://documentation.devexpress.com/eXpressAppFramework/CustomDocument112834.aspx).
+        }
+
+        private XPCollection<Customer> customerDataSource;
+        protected override void OnLoaded()
+        {
+            base.OnLoaded();
+            if (customerDataSource != null)
+            {
+                customerDataSource.Dispose();
+                customerDataSource = null;
+            }
         }
 
         [Persistent("SalesOrderID")] // this line for read-only columns mapping
@@ -134,7 +146,9 @@ namespace CollectionPortal.Module.BusinessObjects
         private Customer fCustomer;
         [RuleRequiredField(DefaultContexts.Save)] // Validation for Required
         [Appearance("DocumentNoCuGetCustomerDatastomerCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
+        [DataSourceProperty("CustomerDataSource")]
         [ImmediatePostData(true)]
+        
         public Customer Customer
         {
             get
@@ -189,29 +203,48 @@ namespace CollectionPortal.Module.BusinessObjects
             set { SetPropertyValue<decimal>("CreditLimit", ref fCreditLimit, value); }
         }
 
-        private XPCollection<Agent> fAvailableAgents;
-        [Browsable(false)] // Prohibits showing the AvailableAccessories collection separately
-        public XPCollection<Agent> AvailableAgents
+        private Agent fAgent;
+        [Appearance("DocumentNoAgentCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
+        [DataSourceCriteria("Oid = '@this.Employee.Agent.Oid'")]
+        [ImmediatePostData(true)]
+        public Agent Agent
         {
             get
             {
-                if (fAvailableAgents == null)
+                return fAgent;
+                
+            }
+            set
+            {
+                SetPropertyValue(nameof(Agent), ref fAgent, value);
+                if (!IsLoading && (customerDataSource != null))
                 {
-                    // Retrieve all Sample objects
-                    fAvailableAgents = new XPCollection<Agent>(Session);
-                    // Filter the retrieved collection according to current conditions
-                    RefreshAgent();
+                    customerDataSource.Criteria = new BinaryOperator("Agent", fAgent);
                 }
-                // Return the filtered collection of Sample objects
-                return fAvailableAgents;
             }
         }
-        public void RefreshAgent()
+
+        [System.ComponentModel.Browsable(false)]
+        public IList<Customer> CustomerDataSource
         {
-            if (fAvailableAgents == null)
+            get
+            {
+                if (customerDataSource == null)
+                {
+                    //customerDataSource = new XPCollection<Customer>(Session, new BinaryOperator("Agent", fAgent));
+                    customerDataSource = fAgent.Customers;
+                    //RefreshCustomer();
+                }
+                return customerDataSource;
+            }
+        }
+
+        private void RefreshCustomer()
+        {
+            if (customerDataSource == null)
                 return;
             // Process the situation when the Party is not specified (see the Scenario 3 above)
-            if (Customer == null)
+            if (Agent == null)
             {
                 // Show only Global Collection when the Party is not specified
                 //fAvailableBookingOrders.Criteria = CriteriaOperator.Parse("1=1");
@@ -219,27 +252,11 @@ namespace CollectionPortal.Module.BusinessObjects
             else
             {
                 // Leave only the current Party's Collection in the fAvailableSampleCollection collection
-                //fAvailableBookingOrders.Criteria = new BinaryOperator("Customer", Customer);
-                fAvailableAgents.Criteria = ContainsOperator.Parse("[Customers][[Oid] = ?]", Customer.Oid);
+                customerDataSource.Criteria = ContainsOperator.Parse("Agent = ?", Agent);
             }
             // Set null for the Collection property to allow an end-user 
             //to set a new value from the refreshed data source
-            Agent = null;
-        }
-
-        private Agent fAgent;
-        [Appearance("DocumentNoAgentCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
-        [DataSourceProperty(nameof(AvailableAgents))]
-        public Agent Agent
-        {
-            get
-            {
-                return fAgent;
-            }
-            set
-            {
-                SetPropertyValue(nameof(Agent), ref fAgent, value);
-            }
+            Customer = null;
         }
 
         private Currency fCurrency;
@@ -285,6 +302,14 @@ namespace CollectionPortal.Module.BusinessObjects
         {
             get { return fRemarks; }
             set { SetPropertyValue<string>("Remarks", ref fRemarks, value); }
+        }
+
+        FileData fAttachment;
+        [Appearance("DocumentNoAttachmentCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
+        public FileData Attachment
+        {
+            get { return fAttachment; }
+            set { SetPropertyValue<FileData>("Attachment", ref fAttachment, value); }
         }
 
         DocumentStatus fDocumentStatus;
@@ -452,8 +477,8 @@ namespace CollectionPortal.Module.BusinessObjects
                 }
             }
 
-            RefreshAgent();
-            Agent = Customer.Agent;
+            //RefreshAgent();
+            //Agent = Customer.Agent;
             //}
             //catch (Exception ex) { }
             //if (isError)
@@ -527,7 +552,7 @@ namespace CollectionPortal.Module.BusinessObjects
                         insertDetailSQL += " slno,FROM_MOD,unique_number,godowncode) ";
                         insertDetailSQL += " values (";
                         insertDetailSQL += " '" + this.Agent.Code + "','SAL_ORDER',0,'" + this.DocumentNumber + "','" + this.DocumentDate.ToString("yyyyMMdd") + "'";
-                        insertDetailSQL += " ,'" + sod.Product.Description.Replace("'", "''") + "'," + sod.Price.ToString() + "," + sod.Price.ToString() + "," + sod.GrossAmount.ToString();
+                        insertDetailSQL += " ,'" + sod.AdditionalDescription.Replace("'", "''") + "'," + sod.Price.ToString() + "," + sod.Price.ToString() + "," + sod.GrossAmount.ToString();
                         insertDetailSQL += " ,'" + sod.Product.Code + "'," + sod.Quantity.ToString() + "," + sod.Quantity + ",";
                         insertDetailSQL += " " + sod.Quantity2.ToString() + "," + sod.Quantity2.ToString() + "," + sod.ConvFac.ToString() + ",";
                         insertDetailSQL += " 'M', '" + this.Location.ERPCode + "','" + this.Customer.ERPCode + "'," + sod.DiscountAmount.ToString() + "," + sod.ProductAmount.ToString() + "," + sod.GrossAmount.ToString();

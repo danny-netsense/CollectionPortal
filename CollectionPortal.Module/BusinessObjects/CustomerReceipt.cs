@@ -367,6 +367,14 @@ namespace CollectionPortal.Module.BusinessObjects
             set { SetPropertyValue<string>("Remarks", ref fRemarks, value); }
         }
 
+        FileData fAttachment;
+        [Appearance("DocumentNoAttachmentCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
+        public FileData Attachment
+        {
+            get { return fAttachment; }
+            set { SetPropertyValue<FileData>("Attachment", ref fAttachment, value); }
+        }
+
         DocumentStatus fDocumentStatus;
         [Appearance("DocumentNoDocumentStatusCond", Enabled = false, Criteria = "IsNullOrEmpty(DocumentNumber)", Context = "DetailView")]
         public DocumentStatus DocumentStatus

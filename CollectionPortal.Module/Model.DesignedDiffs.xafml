@@ -81,6 +81,17 @@
     <SchemaModule Name="SystemModule" Version="19.2.5.0" IsNewNode="True" />
   </SchemaModules>
   <Views>
+    <DetailView Id="Agent_DetailView">
+      <Items>
+        <PropertyEditor Id="Customers" LookupEditorMode="AllItems" />
+        <PropertyEditor Id="Employee" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <DetailView Id="Customer_DetailView">
+      <Items>
+        <PropertyEditor Id="Agent" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
     <DetailView Id="CustomerReceipt_DetailView">
       <Items>
         <PropertyEditor Id="Agent" LookupEditorMode="AllItems" />
@@ -91,6 +102,11 @@
     <DetailView Id="CustomerReceiptDetail_DetailView">
       <Items>
         <PropertyEditor Id="SalesInvoice" LookupEditorMode="AllItems" />
+      </Items>
+    </DetailView>
+    <DetailView Id="Employee_DetailView">
+      <Items>
+        <PropertyEditor Id="Agent" LookupEditorMode="AllItems" />
       </Items>
     </DetailView>
     <ListView Id="Product_LookupListView">

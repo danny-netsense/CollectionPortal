@@ -343,6 +343,17 @@ namespace CollectionPortal.Module.BusinessObjects
             }
         }
 
+        string fAdditionalDescription;
+        [Appearance("ProductAdditionalDescriptionCond", Enabled = false, Criteria = "IsNullOrEmpty(Product)", Context = "DetailView")]
+        public string AdditionalDescription
+        {
+            get { return fAdditionalDescription; }
+            set
+            {
+                SetPropertyValue<string>("AdditionalDescription", ref fAdditionalDescription, value);
+            }
+        }
+
         private SalesOrder _SalesOrder;
         [Association]
         public SalesOrder SalesOrder
